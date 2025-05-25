@@ -1,0 +1,116 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animação Explosão de Texto</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      overflow: hidden;
+      font-family: sans-serif;
+    }.text-stream {
+  position: absolute;
+  white-space: nowrap;
+  animation: scrollText linear infinite;
+  color: #ff69b4;
+  font-weight: bold;
+  user-select: none;
+  pointer-events: none;
+}
+
+@keyframes scrollText {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+.explosion {
+  position: absolute;
+  pointer-events: none;
+}
+
+.explosion span {
+  position: absolute;
+  color: #ff69b4;
+  font-weight: bold;
+  animation: explode 1s ease-out forwards;
+  user-select: none;
+}
+
+@keyframes explode {
+  to {
+    transform: translate(var(--x), var(--y)) scale(0.5);
+    opacity: 0;
+  }
+}
+
+.controls {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  background: rgba(0,0,0,0.7);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.controls label,
+.controls input {
+  color: gray;
+  display: block;
+  margin: 5px 0;
+}
+
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <label>Texto: <input type="text" id="textInput" value="My Love is you!"></label>
+    <label>Cor do texto: <input type="color" id="colorInput" value="#ff69b4"></label>
+  </div>  <script>
+    const textInput = document.getElementById("textInput");
+    const colorInput = document.getElementById("colorInput");
+
+    function createStream() {
+      const div = document.createElement("div");
+      div.className = "text-stream";
+      div.style.left = Math.random() * window.innerWidth + "px";
+      div.style.animationDuration = 10 + Math.random() * 10 + "s";
+      div.style.color = colorInput.value;
+      div.textContent = textInput.value;
+      document.body.appendChild(div);
+      setTimeout(() => div.remove(), 22000);
+    }
+
+    function createExplosion(x, y) {
+      const container = document.createElement("div");
+      container.className = "explosion";
+      container.style.left = x + "px";
+      container.style.top = y + "px";
+
+      for (let i = 0; i < 20; i++) {
+        const span = document.createElement("span");
+        span.textContent = textInput.value;
+        const angle = Math.random() * 2 * Math.PI;
+        const distance = 100 + Math.random() * 100;
+        span.style.setProperty('--x', Math.cos(angle) * distance + 'px');
+        span.style.setProperty('--y', Math.sin(angle) * distance + 'px');
+        span.style.color = colorInput.value;
+        container.appendChild(span);
+      }
+
+      document.body.appendChild(container);
+      setTimeout(() => container.remove(), 950);
+    }
+
+    setInterval(createStream, 175);
+
+    document.addEventListener("click", (e) => {
+      createExplosion(e.clientX, e.clientY);
+    });
+  </script></body>
+</html>
